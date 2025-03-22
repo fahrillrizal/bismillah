@@ -1,2 +1,8 @@
+go*
 .env
-node_modules
+.env*
+tasca
+Dockerfile
+dockercompose.yaml
+.dockerignore
+.DS_Store
