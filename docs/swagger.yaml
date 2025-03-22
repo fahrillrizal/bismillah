@@ -1,0 +1,544 @@
+basePath: /api
+definitions:
+  models.Category:
+    properties:
+      id:
+        type: integer
+      links:
+        items:
+          $ref: '#/definitions/models.Link'
+        type: array
+      name:
+        type: string
+      order:
+        type: integer
+    type: object
+  models.Link:
+    properties:
+      category:
+        $ref: '#/definitions/models.Category'
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      order:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+      url:
+        type: string
+    type: object
+host: api.sekawan-grup.com
+info:
+  contact: {}
+  description: API untuk aplikasi Raya menggunakan Gin framework
+  title: Raya API
+  version: "1.0"
+paths:
+  /api/categories:
+    get:
+      description: Get a list of all categories
+      parameters:
+      - description: Include categories with no links
+        in: query
+        name: includeEmpty
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
+        "500":
+          description: 'message: Error fetching categories'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new category with the input data
+      parameters:
+      - description: Category Data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/models.Category'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: 'message: Invalid input format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message: Error menentukan urutan'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new category
+      tags:
+      - categories
+  /api/categories/{category_id}/links:
+    get:
+      description: Get all links belonging to a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Link'
+            type: array
+        "400":
+          description: 'message: ID kategori tidak valid'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Kategori tidak ditemukan'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message: Error mengambil link'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get links by category
+      tags:
+      - links
+    post:
+      consumes:
+      - application/json
+      description: Create a new link in a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: integer
+      - description: Link Data
+        in: body
+        name: link
+        required: true
+        schema:
+          $ref: '#/definitions/models.Link'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Link'
+        "400":
+          description: 'message: Format input tidak valid'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Kategori tidak ditemukan'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message: Error menentukan urutan'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new link
+      tags:
+      - links
+  /api/categories/{category_id}/links/{link_id}:
+    delete:
+      description: Delete a link from a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: integer
+      - description: Link ID
+        in: path
+        name: link_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Link berhasil dihapus'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message: ID link tidak valid'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Link tidak ditemukan dalam kategori ini'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message: Error menghapus link'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a link
+      tags:
+      - links
+    patch:
+      consumes:
+      - application/json
+      description: Update a link in a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: integer
+      - description: Link ID
+        in: path
+        name: link_id
+        required: true
+        type: integer
+      - description: Link Data
+        in: body
+        name: link
+        required: true
+        schema:
+          $ref: '#/definitions/models.Link'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Link'
+        "400":
+          description: 'message: Format input tidak valid'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Link tidak ditemukan dalam kategori ini'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update a link
+      tags:
+      - links
+  /api/categories/{id}:
+    get:
+      description: Get details of a specific category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: 'message: Invalid ID format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Category not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get a category by ID
+      tags:
+      - categories
+    patch:
+      consumes:
+      - application/json
+      description: Update a category with the input data
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category Data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/models.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: 'message: Invalid input format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Category not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update a category
+      tags:
+      - categories
+  /api/category/{id}:
+    delete:
+      description: Delete a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Category deleted successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message: Invalid ID format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Category not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'message: Error deleting category'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a category
+      tags:
+      - categories
+  /api/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Change the password of an authenticated user
+      parameters:
+      - description: Password Data
+        in: body
+        name: password
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Password berhasil diubah'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message: Input tidak valid'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'message: Unauthorized'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Change user password
+      tags:
+      - auth
+  /api/links/{id}:
+    get:
+      description: Get details of a specific link by its ID
+      parameters:
+      - description: Link ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Link'
+        "400":
+          description: 'message: Invalid ID format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Link not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get a link by ID
+      tags:
+      - links
+  /api/links/all:
+    get:
+      description: Get a list of all links
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Link'
+            type: array
+        "500":
+          description: 'message: Error fetching links'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get all links
+      tags:
+      - links
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return a token
+      parameters:
+      - description: Login Credentials
+        in: body
+        name: login
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'token: JWT Token'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'message: Username and password are required'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'message: Invalid credentials'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login user
+      tags:
+      - auth
+  /api/logout:
+    post:
+      description: Logout a user from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Logout successful'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Logout user
+      tags:
+      - auth
+swagger: "2.0"

@@ -5,12 +5,16 @@ import (
 	"raya/middleware"
 
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
 func SetupRouter(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	
 	r.Use(func(c *gin.Context) {
 		if db == nil {
 			c.AbortWithStatusJSON(500, gin.H{"error": "Database connection error"})

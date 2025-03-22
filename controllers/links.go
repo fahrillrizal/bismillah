@@ -10,6 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetCategoryByID godoc
+// @Summary Get a category by ID
+// @Description Get details of a specific category by its ID
+// @Tags categories
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Category ID"
+// @Success 200 {object} models.Category
+// @Failure 400 {object} map[string]string "message: Invalid ID format"
+// @Failure 404 {object} map[string]string "message: Category not found"
+// @Router /api/categories/{id} [get]
 func GetCategoryByID(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	idStr := c.Param("id")
@@ -28,6 +39,15 @@ func GetCategoryByID(c *gin.Context) {
 	c.JSON(http.StatusOK, category)
 }
 
+// GetAllCategories godoc
+// @Summary Get all categories
+// @Description Get a list of all categories
+// @Tags categories
+// @Produce json
+// @Param includeEmpty query bool false "Include categories with no links"
+// @Success 200 {array} models.Category
+// @Failure 500 {object} map[string]string "message: Error fetching categories"
+// @Router /api/categories [get]
 func GetAllCategories(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	includeEmpty := c.Query("includeEmpty") == "true"
@@ -41,6 +61,15 @@ func GetAllCategories(c *gin.Context) {
 	c.JSON(http.StatusOK, categories)
 }
 
+// GetAllLinks godoc
+// @Summary Get all links
+// @Description Get a list of all links
+// @Tags links
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {array} models.Link
+// @Failure 500 {object} map[string]string "message: Error fetching links"
+// @Router /api/links/all [get]
 func GetAllLinks(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -53,6 +82,17 @@ func GetAllLinks(c *gin.Context) {
 	c.JSON(http.StatusOK, links)
 }
 
+// GetLinkByID godoc
+// @Summary Get a link by ID
+// @Description Get details of a specific link by its ID
+// @Tags links
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Link ID"
+// @Success 200 {object} models.Link
+// @Failure 400 {object} map[string]string "message: Invalid ID format"
+// @Failure 404 {object} map[string]string "message: Link not found"
+// @Router /api/links/{id} [get]
 func GetLinkByID(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	idStr := c.Param("id")
@@ -71,6 +111,18 @@ func GetLinkByID(c *gin.Context) {
 	c.JSON(http.StatusOK, link)
 }
 
+// GetLinksByCategory godoc
+// @Summary Get links by category
+// @Description Get all links belonging to a specific category
+// @Tags links
+// @Produce json
+// @Security ApiKeyAuth
+// @Param category_id path int true "Category ID"
+// @Success 200 {array} models.Link
+// @Failure 400 {object} map[string]string "message: ID kategori tidak valid"
+// @Failure 404 {object} map[string]string "message: Kategori tidak ditemukan"
+// @Failure 500 {object} map[string]string "message: Error mengambil link"
+// @Router /api/categories/{category_id}/links [get]
 func GetLinksByCategory(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	
@@ -100,6 +152,20 @@ func GetLinksByCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, links)
 }
 
+// CreateLink godoc
+// @Summary Create a new link
+// @Description Create a new link in a specific category
+// @Tags links
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param category_id path int true "Category ID"
+// @Param link body models.Link true "Link Data"
+// @Success 201 {object} models.Link
+// @Failure 400 {object} map[string]string "message: Format input tidak valid"
+// @Failure 404 {object} map[string]string "message: Kategori tidak ditemukan"
+// @Failure 500 {object} map[string]string "message: Error menentukan urutan"
+// @Router /api/categories/{category_id}/links [post]
 func CreateLink(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 		
@@ -148,6 +214,20 @@ func CreateLink(c *gin.Context) {
 	c.JSON(http.StatusCreated, link)
 }
 
+// UpdateLink godoc
+// @Summary Update a link
+// @Description Update a link in a specific category
+// @Tags links
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param category_id path int true "Category ID"
+// @Param link_id path int true "Link ID"
+// @Param link body models.Link true "Link Data"
+// @Success 200 {object} models.Link
+// @Failure 400 {object} map[string]string "message: Format input tidak valid"
+// @Failure 404 {object} map[string]string "message: Link tidak ditemukan dalam kategori ini"
+// @Router /api/categories/{category_id}/links/{link_id} [patch]
 func UpdateLink(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 		
@@ -188,6 +268,19 @@ func UpdateLink(c *gin.Context) {
 	c.JSON(http.StatusOK, link)
 }
 
+// DeleteLink godoc
+// @Summary Delete a link
+// @Description Delete a link from a specific category
+// @Tags links
+// @Produce json
+// @Security ApiKeyAuth
+// @Param category_id path int true "Category ID"
+// @Param link_id path int true "Link ID"
+// @Success 200 {object} map[string]string "message: Link berhasil dihapus"
+// @Failure 400 {object} map[string]string "message: ID link tidak valid"
+// @Failure 404 {object} map[string]string "message: Link tidak ditemukan dalam kategori ini"
+// @Failure 500 {object} map[string]string "message: Error menghapus link"
+// @Router /api/categories/{category_id}/links/{link_id} [delete]
 func DeleteLink(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 		
@@ -219,6 +312,18 @@ func DeleteLink(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Link berhasil dihapus"})
 }
 
+// CreateCategory godoc
+// @Summary Create a new category
+// @Description Create a new category with the input data
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param category body models.Category true "Category Data"
+// @Success 201 {object} models.Category
+// @Failure 400 {object} map[string]string "message: Invalid input format"
+// @Failure 500 {object} map[string]string "message: Error menentukan urutan"
+// @Router /api/categories [post]
 func CreateCategory(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -250,6 +355,19 @@ func CreateCategory(c *gin.Context) {
 	c.JSON(http.StatusCreated, category)
 }
 
+// UpdateCategory godoc
+// @Summary Update a category
+// @Description Update a category with the input data
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Category ID"
+// @Param category body models.Category true "Category Data"
+// @Success 200 {object} models.Category
+// @Failure 400 {object} map[string]string "message: Invalid input format"
+// @Failure 404 {object} map[string]string "message: Category not found"
+// @Router /api/categories/{id} [patch]
 func UpdateCategory(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	idStr := c.Param("id")
@@ -277,6 +395,18 @@ func UpdateCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, category)
 }
 
+// DeleteCategory godoc
+// @Summary Delete a category
+// @Description Delete a category by its ID
+// @Tags categories
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Category ID"
+// @Success 200 {object} map[string]string "message: Category deleted successfully"
+// @Failure 400 {object} map[string]string "message: Invalid ID format"
+// @Failure 404 {object} map[string]string "message: Category not found"
+// @Failure 500 {object} map[string]string "message: Error deleting category"
+// @Router /api/category/{id} [delete]
 func DeleteCategory(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	idStr := c.Param("id")

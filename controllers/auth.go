@@ -8,6 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// LoginUser godoc
+// @Summary Login user
+// @Description Authenticate user and return a token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param login body object true "Login Credentials" 
+// @Success 200 {object} map[string]string "token: JWT Token"
+// @Failure 400 {object} map[string]string "message: Username and password are required"
+// @Failure 401 {object} map[string]string "message: Invalid credentials"
+// @Router /api/login [post]
 func LoginUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
@@ -32,6 +43,18 @@ func LoginUser(c *gin.Context) {
 	})
 }
 
+// ChangePassword godoc
+// @Summary Change user password
+// @Description Change the password of an authenticated user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param password body object true "Password Data"
+// @Success 200 {object} map[string]string "message: Password berhasil diubah"
+// @Failure 400 {object} map[string]string "message: Input tidak valid"
+// @Failure 401 {object} map[string]string "message: Unauthorized"
+// @Router /api/change-password [post]
 func ChangePassword(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	user := c.MustGet("user").(*models.Admin)
@@ -54,6 +77,14 @@ func ChangePassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Password berhasil diubah"})
 }
 
+// LogoutUser godoc
+// @Summary Logout user
+// @Description Logout a user from the system
+// @Tags auth
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]string "message: Logout successful"
+// @Router /api/logout [post]
 func LogoutUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Logout successful"})
 }
