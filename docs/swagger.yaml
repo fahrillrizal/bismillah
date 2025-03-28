@@ -23,10 +23,16 @@ definitions:
         type: string
       id:
         type: integer
+      image_url:
+        type: string
       is_active:
         type: boolean
       order:
         type: integer
+      price:
+        type: integer
+      price_str:
+        type: string
       title:
         type: string
       updated_at:
@@ -432,6 +438,39 @@ paths:
       summary: Change user password
       tags:
       - auth
+  /api/links:
+    get:
+      description: Get details of a specific category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: 'message: Invalid ID format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'message: Category not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get a category by ID
+      tags:
+      - categories
   /api/links/{id}:
     get:
       description: Get details of a specific link by its ID

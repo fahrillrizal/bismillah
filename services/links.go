@@ -11,8 +11,20 @@ func GetAllCategories(db *gorm.DB, includeEmpty bool) ([]models.Category, error)
 	return repositories.GetAllCategories(db, includeEmpty)
 }
 
+func GetCategories(db *gorm.DB) ([]models.Category, error) {
+	return repositories.GetCategories(db)
+}
+
+func GetLinks(db *gorm.DB) ([]models.Link, error) {
+	return repositories.GetLinks(db)
+}
+
 func GetAllLinks(db *gorm.DB) ([]models.Link, error) {
 	return repositories.GetAllLinks(db)
+}
+
+func GetCategoriesWithLinks(db *gorm.DB) ([]models.Category, error) {
+    return repositories.GetCategoriesWithLinks(db)
 }
 
 func GetLinkByID(db *gorm.DB, id uint) (*models.Link, error) {

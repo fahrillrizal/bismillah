@@ -3,7 +3,9 @@ package routes
 import (
 	"raya/controllers"
 	"raya/middleware"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
@@ -12,6 +14,31 @@ import (
 
 func SetupRouter(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{
+			"https://sekawan-grup.com",
+			"https://api.sekawan-grup.com",
+			"http://localhost:3000",
+			"http://localhost:8080",
+		},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{
+			"Origin", 
+			"Content-Type", 
+			"Content-Length", 
+			"Accept-Encoding", 
+			"X-CSRF-Token", 
+			"Authorization",
+			"Accept",
+		},
+		ExposeHeaders:    []string{
+			"Content-Length", 
+			"Authorization",
+		},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	
@@ -26,7 +53,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	api := r.Group("/api")
 	{
-		api.GET("/links", controllers.GetAllCategories)
+		api.GET("/categories-with-links", controllers.GetCategoriesWithLinks)//untuk section service
 
 		// Auth
 		api.POST("/login", controllers.LoginUser)
@@ -40,6 +67,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 			// Link management
 			admin.GET("/links/all", controllers.GetAllLinks)
 			admin.GET("/links/:id", controllers.GetLinkByID)
+			admin.GET("/links", controllers.GetLinks)//untuk dashboard/links
 			
 			// Link management dalam kategori
 			admin.GET("/categories/:category_id/links", controllers.GetLinksByCategory)
@@ -48,7 +76,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 			admin.DELETE("/categories/:category_id/links/:link_id", controllers.DeleteLink)
 
 			// Category management
-			admin.GET("/categories", controllers.GetAllCategories)
+			admin.GET("/categories", controllers.GetCategories)//untuk dashboard/categories
 			admin.GET("/category/:id", controllers.GetCategoryByID)
 			admin.POST("/category", controllers.CreateCategory)
 			admin.PATCH("/category/:id", controllers.UpdateCategory)

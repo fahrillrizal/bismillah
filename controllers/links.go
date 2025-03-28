@@ -39,6 +39,52 @@ func GetCategoryByID(c *gin.Context) {
 	c.JSON(http.StatusOK, category)
 }
 
+// GetCategoryByID godoc
+// @Summary Get a category by ID
+// @Description Get details of a specific category by its ID
+// @Tags categories
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Category ID"
+// @Success 200 {object} models.Category
+// @Failure 400 {object} map[string]string "message: Invalid ID format"
+// @Failure 404 {object} map[string]string "message: Category not found"
+// @Router /api/categories [get]
+func GetCategories(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	categories, err := services.GetCategories(db)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error fetching categories"})
+		return
+	}
+
+	c.JSON(http.StatusOK, categories)
+}
+
+// GetCategoryByID godoc
+// @Summary Get a category by ID
+// @Description Get details of a specific category by its ID
+// @Tags categories
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Category ID"
+// @Success 200 {object} models.Category
+// @Failure 400 {object} map[string]string "message: Invalid ID format"
+// @Failure 404 {object} map[string]string "message: Category not found"
+// @Router /api/links [get]
+func GetLinks(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	links, err := services.GetLinks(db)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error fetching links"})
+		return
+	}
+
+	c.JSON(http.StatusOK, links)
+}
+
 // GetAllCategories godoc
 // @Summary Get all categories
 // @Description Get a list of all categories
@@ -47,7 +93,7 @@ func GetCategoryByID(c *gin.Context) {
 // @Param includeEmpty query bool false "Include categories with no links"
 // @Success 200 {array} models.Category
 // @Failure 500 {object} map[string]string "message: Error fetching categories"
-// @Router /api/categories [get]
+// @Router /api/links [get]
 func GetAllCategories(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	includeEmpty := c.Query("includeEmpty") == "true"
@@ -80,6 +126,26 @@ func GetAllLinks(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, links)
+}
+
+// GetCategoriesWithLinks godoc
+// @Summary Get all categories with their links
+// @Description Get a list of all categories with their associated links
+// @Tags categories
+// @Produce json
+// @Success 200 {array} models.Category
+// @Failure 500 {object} map[string]string "message: Error fetching categories with links"
+// @Router /api/categories-with-links [get]
+func GetCategoriesWithLinks(c *gin.Context) {
+    db := c.MustGet("db").(*gorm.DB)
+    
+    categories, err := services.GetCategoriesWithLinks(db)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"message": "Error fetching categories with links"})
+        return
+    }
+    
+    c.JSON(http.StatusOK, categories)
 }
 
 // GetLinkByID godoc
