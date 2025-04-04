@@ -36,3 +36,19 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func DetectMobileMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userAgent := c.GetHeader("User-Agent")
+
+		if !strings.Contains(userAgent, "Android") && !strings.Contains(userAgent, "iPhone") && !strings.Contains(userAgent, "iPad") {
+			c.JSON(http.StatusForbidden, gin.H{
+				"message": "Akses hanya diperbolehkan dari perangkat mobile (Android/iOS)",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}

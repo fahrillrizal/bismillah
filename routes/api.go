@@ -50,8 +50,9 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		c.Set("db", db)
 		c.Next()
 	})
-
+		
 	api := r.Group("/api")
+	r.Use(middleware.DetectMobileMiddleware())
 	{
 		api.GET("/categories-with-links", controllers.GetCategoriesWithLinks)//untuk section service
 
